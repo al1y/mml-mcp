@@ -1,0 +1,80 @@
+{
+  "name": "mml-mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol server for Metaverse Markup Language (MML)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "20.18.0"
+  },
+  "engine-strict": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tools/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "dev": "npm run dev:streamable-http",
+    "dev:stdio": "turbo run dev:local-servers dev:stdio:setup-config dev:stdio:watch --parallel",
+    "dev:sse": "turbo run dev:local-servers dev:sse --parallel",
+    "dev:streamable-http": "turbo run dev:local-servers dev:streamable-http --parallel",
+    "test": "npm run build && cross-env NODE_OPTIONS='--experimental-vm-modules' jest --forceExit",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mml",
+    "metaverse-markup-language"
+  ],
+  "author": "al1y",
+  "license": "MIT",
+  "dependencies": {
+    "@eslint/js": "^9.29.0",
+    "three": "0.163.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.0.0",
+    "@types/three": "0.163.0",
+    "@typescript-eslint/eslint-plugin": "^8.34.0",
+    "@typescript-eslint/parser": "^8.34.0",
+    "babel-jest": "^29.7.0",
+    "cross-env": "^7.0.3",
+    "eslint": "9.11.1",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0",
+    "lint-staged": "^16.1.0",
+    "ts-jest": "^29.1.1",
+    "tsx": "^4.19.4",
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.0"
+  },
+  "resolutions": {
+    "three": "0.163.0",
+    "@types/three": "0.163.0"
+  },
+  "files": [
+    "packages/*/build/**/*",
+    "packages/*/dist/**/*",
+    "apps/*/build/**/*",
+    "apps/*/dist/**/*",
+    "README.md"
+  ],
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "packageManager": "npm@10.9.0"
+}

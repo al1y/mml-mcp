@@ -1,0 +1,11 @@
+{
+  "name": "@mml-mcp/inspector",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:local-servers": "npx @modelcontextprotocol/inspector"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

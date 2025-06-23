@@ -1,0 +1,36 @@
+{
+  "name": "@mml-mcp/mml-client",
+  "version": "1.0.0",
+  "description": "MML Object Storage Client",
+  "type": "module",
+  "main": "build/index.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "cross-env PORT=8001 tsx --watch --watch-preserve-output src/index.ts",
+    "dev:local-servers": "cross-env PORT=8001 tsx --watch src/server.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
+  },
+  "dependencies": {
+    "@mml-io/mml-web": "^0.19.7",
+    "@mml-io/mml-web-client": "0.19.3",
+    "@mml-io/mml-web-threejs": "^0.19.7",
+    "@mml-io/mml-web-threejs-standalone": "^0.19.7",
+    "@mml-io/networked-dom-server": "0.19.3",
+    "chokidar": "^3.6.0",
+    "express": "^4.21.2",
+    "express-ws": "^5.0.2",
+    "ws": "^8.18.0",
+    "@mml-mcp/shared": "*"
+  },
+  "devDependencies": {
+    "@types/chokidar": "^2.1.7",
+    "@types/express": "^5.0.0",
+    "@types/express-ws": "^3.0.5",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

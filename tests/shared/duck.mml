@@ -1,0 +1,10 @@
+<m-model x="-2" collide="true" src="https://public.mml.io/damaged-helmet.glb" z="-2" y="1.2" sx="0.5" sy="0.5" sz="0.5"></m-model>
+
+<m-cube id="clickable-cube" y="1" color="red" collide="true" z="-2"></m-cube>
+
+<m-model x="2" z="-2" id="duck" src="https://public.mml.io/duck.glb" y="0.37872010769124587" collide="true">
+</m-model>
+
+<m-cube id="color-cube" x="4" y="1" width="1" color="green" collide="true" z="-2" castshadow="true"></m-cube>
+
+<m-light id="ambient" type="point" x="0" y="20" z="0" color="#ddd6fe" intensity="1000"></m-light>

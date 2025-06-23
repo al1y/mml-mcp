@@ -1,0 +1,292 @@
+{
+    "/v1/mml-objects/{projectId}/object-instances/": {
+        "get": {
+            "summary": "List MML Object Instances",
+            "operationId": "v1_mmlObjects_listMMLObjectInstances",
+            "tags": [
+                "objects"
+            ],
+            "parameters": [
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the Project the MML Object Instance belongs to",
+                    "schema": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "offset",
+                    "in": "query",
+                    "description": "The offset into queried items to return",
+                    "required": false,
+                    "schema": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "format": "int32"
+                    }
+                },
+                {
+                    "name": "limit",
+                    "in": "query",
+                    "description": "How many items to return at one time (max 100)",
+                    "required": false,
+                    "schema": {
+                        "type": "integer",
+                        "maximum": 100,
+                        "format": "int32"
+                    }
+                },
+                {
+                    "name": "search",
+                    "in": "query",
+                    "description": "Search query",
+                    "required": false,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "A paged array of MML Object Instances",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "objects",
+                                    "totalResults",
+                                    "offset",
+                                    "limit",
+                                    "canWrite"
+                                ],
+                                "properties": {
+                                    "objects": {
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "#/components/schemas/v1_mmlObjects_MMLObjectInstance"
+                                        }
+                                    },
+                                    "totalResults": {
+                                        "type": "integer"
+                                    },
+                                    "offset": {
+                                        "type": "integer"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "canWrite": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "$ref": "#/components/responses/Error"
+                }
+            }
+        },
+        "post": {
+            "summary": "Create an MML Object Instance",
+            "operationId": "v1_mmlObjects_createObjectInstance",
+            "tags": [
+                "objects"
+            ],
+            "parameters": [
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the Project the MML Object Instance belongs to",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "requestBody": {
+                "description": "MML Object Instance to create",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/v1_mmlObjects_CreateMMLObjectInstanceBody"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Expected response to a valid request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1_mmlObjects_MMLObjectInstance"
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "$ref": "#/components/responses/Error"
+                }
+            }
+        }
+    },
+    "/v1/mml-objects/{projectId}/object-instances/{instanceId}": {
+        "get": {
+            "summary": "Retrieve an MML Object Instance",
+            "operationId": "v1_mmlObjects_getMMLObjectInstance",
+            "tags": [
+                "objects"
+            ],
+            "parameters": [
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the Project the MML Object Instance belongs to",
+                    "schema": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "instanceId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the MML Object Instance to retrieve",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Expected response to a valid request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/v1_mmlObjects_MMLObjectInstance"
+                                    },
+                                    {
+                                        "required": [
+                                            "canWrite"
+                                        ],
+                                        "properties": {
+                                            "canWrite": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "$ref": "#/components/responses/Error"
+                }
+            }
+        },
+        "post": {
+            "summary": "Edit an MML Object Instance",
+            "operationId": "v1_mmlObjects_updateMMLObjectInstance",
+            "tags": [
+                "objects"
+            ],
+            "parameters": [
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the Project the MML Object Instance belongs to",
+                    "schema": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "instanceId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the MML Object Instance to edit",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "requestBody": {
+                "description": "MML Object Instance updates",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/v1_mmlObjects_UpdateMMLObjectInstanceBody"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Expected response to a valid request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/v1_mmlObjects_MMLObjectInstance"
+                            }
+                        }
+                    }
+                },
+                "default": {
+                    "$ref": "#/components/responses/Error"
+                }
+            }
+        },
+        "delete": {
+            "summary": "Delete an MML Object Instance",
+            "operationId": "v1_mmlObjects_deleteMMLObjectInstance",
+            "tags": [
+                "objects"
+            ],
+            "parameters": [
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the Project the MML Object Instance belongs to",
+                    "schema": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "instanceId",
+                    "in": "path",
+                    "required": true,
+                    "description": "The id of the MML Object Instance to delete",
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "responses": {
+                "204": {
+                    "description": "The MML Object Instance was deleted"
+                },
+                "default": {
+                    "description": "An error occurred",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Error"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

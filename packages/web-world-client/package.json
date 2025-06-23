@@ -1,0 +1,28 @@
+{
+  "name": "@mml-mcp/web-world-client",
+  "version": "1.0.0",
+  "description": "Web World API Client",
+  "type": "module",
+  "main": "build/index.js",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "cross-env PORT=8002 tsx --watch --preserveWatchOutput src/index.ts",
+    "dev:local-servers": "cross-env PORT=8002 tsx --watch src/server.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
+  },
+  "dependencies": {
+    "@mml-io/3d-web-experience-client": "^0.21.6",
+    "express": "^4.21.2",
+    "ws": "^8.18.0",
+    "@mml-mcp/shared": "*"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

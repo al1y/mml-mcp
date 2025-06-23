@@ -1,0 +1,22 @@
+{
+  "name": "@mml-mcp/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities, types, and constants for MML MCP packages",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "clean": "rm -rf build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

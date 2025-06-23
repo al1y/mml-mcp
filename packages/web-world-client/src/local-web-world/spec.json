@@ -1,0 +1,298 @@
+"/v1/worlds/{projectId}/web-world-instances/": {
+    "get": {
+        "summary": "List Web World Instances",
+        "operationId": "v1_worlds_listWorlds",
+        "tags": [
+            "worlds"
+        ],
+        "parameters": [
+            {
+                "name": "projectId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Project the Web World belongs to",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "offset",
+                "in": "query",
+                "description": "The offset into queried items to return",
+                "required": false,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "format": "int32"
+                }
+            },
+            {
+                "name": "limit",
+                "in": "query",
+                "description": "How many items to return at one time (max 100)",
+                "required": false,
+                "schema": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "format": "int32"
+                }
+            },
+            {
+                "name": "search",
+                "in": "query",
+                "description": "Search query",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "A paged array of Web World Instances",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "worlds",
+                                "totalResults",
+                                "offset",
+                                "limit",
+                                "canWrite",
+                                "tier"
+                            ],
+                            "properties": {
+                                "worlds": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/v1_worlds_World"
+                                    }
+                                },
+                                "totalResults": {
+                                    "type": "integer"
+                                },
+                                "offset": {
+                                    "type": "integer"
+                                },
+                                "limit": {
+                                    "type": "integer"
+                                },
+                                "canWrite": {
+                                    "type": "boolean"
+                                },
+                                "tier": {
+                                    "$ref": "#/components/schemas/v1_worlds_WebWorldsTier"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "default": {
+                "$ref": "#/components/responses/Error"
+            }
+        }
+    },
+    "post": {
+        "summary": "Create a Web World Instance",
+        "operationId": "v1_worlds_createWorld",
+        "tags": [
+            "worlds"
+        ],
+        "parameters": [
+            {
+                "name": "projectId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Project the Web World Instance belongs to",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "requestBody": {
+            "description": "Web World Instance to create",
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/v1_worlds_CreateWorldBody"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Expected response to a valid request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/v1_worlds_World"
+                        }
+                    }
+                }
+            },
+            "default": {
+                "$ref": "#/components/responses/Error"
+            }
+        }
+    }
+},
+"/v1/worlds/{projectId}/web-world-instances/{worldId}": {
+    "get": {
+        "summary": "Retrieve a Web World Instance",
+        "operationId": "v1_worlds_getWorld",
+        "tags": [
+            "worlds"
+        ],
+        "parameters": [
+            {
+                "name": "projectId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Project the Web World Instance belongs to",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "worldId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Web World Instance to retrieve",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Expected response to a valid request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/components/schemas/v1_worlds_World"
+                                },
+                                {
+                                    "required": [
+                                        "canWrite",
+                                        "tier"
+                                    ],
+                                    "properties": {
+                                        "canWrite": {
+                                            "type": "boolean"
+                                        },
+                                        "tier": {
+                                            "$ref": "#/components/schemas/v1_worlds_WebWorldsTier"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "default": {
+                "$ref": "#/components/responses/Error"
+            }
+        }
+    },
+    "post": {
+        "summary": "Edit a Web World Instance",
+        "operationId": "v1_worlds_updateWorld",
+        "tags": [
+            "worlds"
+        ],
+        "parameters": [
+            {
+                "name": "projectId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Project the Web World Instance belongs to",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "worldId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Web World Instance to edit",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "requestBody": {
+            "description": "Web World Instance updates",
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/v1_worlds_UpdateWorldBody"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Expected response to a valid request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/v1_worlds_World"
+                        }
+                    }
+                }
+            },
+            "default": {
+                "$ref": "#/components/responses/Error"
+            }
+        }
+    },
+    "delete": {
+        "summary": "Delete a Web World Instance",
+        "operationId": "v1_worlds_deleteWorld",
+        "tags": [
+            "worlds"
+        ],
+        "parameters": [
+            {
+                "name": "projectId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Project the Web World Instance belongs to",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            {
+                "name": "worldId",
+                "in": "path",
+                "required": true,
+                "description": "The id of the Web World Instance to delete",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        ],
+        "responses": {
+            "204": {
+                "description": "The Web World Instance was deleted"
+            },
+            "default": {
+                "description": "An error occurred",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        }
+                    }
+                }
+            }
+        }
+    }
+},

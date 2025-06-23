@@ -1,0 +1,53 @@
+<m-group id="scene123">
+    <m-cube id="ground" x="0" y="-0.1" z="0" sx="50" sy="0.2" sz="50" color="#4a7c59"></m-cube>
+    <m-cube id="road-main" x="0" y="0" z="0" sx="4" sy="0.1" sz="40" color="#666666"></m-cube>
+    <m-cube id="road-cross" x="0" y="0" z="0" sx="20" sy="0.1" sz="4" color="#666666"></m-cube>
+    <m-cube id="house1-base" x="0" y="1.5" z="0" sx="4" sy="3" sz="4" color="#d4a574"></m-cube>
+    <m-cube id="house1-roof" x="0" y="3.5" z="0" sx="5" sy="1" sz="5" color="#8b4513"></m-cube>
+    <m-cube id="house1-door" x="0" y="1" z="2.1" sx="0.8" sy="2" sz="0.2" color="#654321"></m-cube>
+    <m-cube id="house1-window1" x="-1" y="1.8" z="2.1" sx="0.8" sy="0.8" sz="0.1" color="#87ceeb"></m-cube>
+    <m-cube id="house1-window2" x="1" y="1.8" z="2.1" sx="0.8" sy="0.8" sz="0.1" color="#87ceeb"></m-cube>
+    <m-group id="house2" x="8" y="0" z="-8"></m-group>
+    <m-cube id="house2-base" x="0" y="1.8" z="0" sx="3.5" sy="3.6" sz="3.5" color="#f4a460"></m-cube>
+    <m-cube id="house2-roof" x="0" y="4.2" z="0" sx="4.5" sy="1.2" sz="4.5" color="#a0522d"></m-cube>
+    <m-cube id="house2-door" x="0" y="1.2" z="1.8" sx="0.7" sy="2.4" sz="0.1" color="#2f4f4f"></m-cube>
+    <m-group id="house3" x="-8" y="0" z="8"></m-group>
+    <m-cube id="house3-base" x="0" y="1.2" z="0" sx="3" sy="2.4" sz="5" color="#dda0dd"></m-cube>
+    <m-cube id="house3-roof" x="0" y="2.8" z="0" sx="3.8" sy="0.8" sz="5.8" color="#696969"></m-cube>
+    <m-cube id="house3-chimney" x="1" y="4" z="1.5" sx="0.6" sy="2" sz="0.6" color="#8b0000"></m-cube>
+    <m-group id="house4" x="8" y="0" z="8"></m-group>
+    <m-cube id="house4-base" x="0" y="1" z="0" sx="4.5" sy="2" sz="3" color="#ffdab9"></m-cube>
+    <m-cube id="house4-roof" x="0" y="2.5" z="0" sx="5.2" sy="1" sz="3.7" color="#4682b4"></m-cube>
+    <m-cylinder id="tree1-trunk" x="-15" y="1.5" z="-15" radius="0.3" height="3" color="#8b4513"></m-cylinder>
+    <m-sphere id="tree1-leaves" x="-15" y="3.5" z="-15" radius="2" color="#228b22"></m-sphere>
+    <m-cylinder id="tree2-trunk" x="15" y="2" z="-12" radius="0.4" height="4" color="#a0522d"></m-cylinder>
+    <m-sphere id="tree2-leaves" x="15" y="4.5" z="-12" radius="2.2" color="#32cd32"></m-sphere>
+    <m-cylinder id="tree3-trunk" x="-12" y="1.8" z="15" radius="0.35" height="3.6" color="#8b4513"></m-cylinder>
+    <m-sphere id="tree3-leaves" x="-12" y="4" z="15" radius="1.8" color="#228b22"></m-sphere>
+    <m-cylinder id="tree4-trunk" x="12" y="1.6" z="14" radius="0.25" height="3.2" color="#8b4513"></m-cylinder>
+    <m-sphere id="tree4-leaves" x="12" y="3.5" z="14" radius="1.5" color="#32cd32"></m-sphere>
+    <m-cube id="well-base" x="3" y="0.5" z="3" sx="2" sy="1" sz="2" color="#708090"></m-cube>
+    <m-cylinder id="well-rim" x="3" y="1.2" z="3" radius="1.2" height="0.4" color="#2f4f4f"></m-cylinder>
+    <m-cube id="well-post1" x="2" y="2.5" z="3" sx="0.2" sy="3" sz="0.2" color="#8b4513"></m-cube>
+    <m-cube id="well-post2" x="4" y="2.5" z="3" sx="0.2" sy="3" sz="0.2" color="#8b4513"></m-cube>
+    <m-cube id="well-roof" x="3" y="4.2" z="3" sx="2.5" sy="0.3" sz="2.5" color="#8b0000"></m-cube>
+    <m-cube id="fence1" x="-4" y="0.8" z="-12" sx="8" sy="0.2" sz="0.2" color="#deb887"></m-cube>
+    <m-cube id="fence2" x="6" y="0.8" z="-12" sx="6" sy="0.2" sz="0.2" color="#deb887"></m-cube>
+    <m-cube id="fence-post1" x="-8" y="1" z="-12" sx="0.3" sy="2" sz="0.3" color="#8b4513"></m-cube>
+    <m-cube id="fence-post2" x="0" y="1" z="-12" sx="0.3" sy="2" sz="0.3" color="#8b4513"></m-cube>
+    <m-cube id="fence-post3" x="9" y="1" z="-12" sx="0.3" sy="2" sz="0.3" color="#8b4513"></m-cube>
+    <m-cube id="market-stall-roof" x="-3" y="3" z="0" sx="4" sy="0.2" sz="3" color="#ff6347"></m-cube>
+    <m-cube id="market-post1" x="-5" y="1.5" z="-1" sx="0.2" sy="3" sz="0.2" color="#8b4513"></m-cube>
+    <m-cube id="market-post2" x="-1" y="1.5" z="-1" sx="0.2" sy="3" sz="0.2" color="#8b4513"></m-cube>
+    <m-cube id="market-post3" x="-5" y="1.5" z="1" sx="0.2" sy="3" sz="0.2" color="#8b4513"></m-cube>
+    <m-cube id="market-post4" x="-1" y="1.5" z="1" sx="0.2" sy="3" sz="0.2" color="#8b4513"></m-cube>
+    <m-cube id="cart-body" x="6" y="0.8" z="0" sx="2" sy="0.8" sz="1.2" color="#daa520"></m-cube>
+    <m-cylinder id="cart-wheel1" x="5.2" y="0.4" z="0.7" radius="0.4" height="0.2" color="#8b4513" rx="90"></m-cylinder>
+    <m-cylinder id="cart-wheel2" x="5.2" y="0.4" z="-0.7" radius="0.4" height="0.2" color="#8b4513" rx="90"></m-cylinder>
+    <m-sphere id="bush1" x="-6" y="0.6" z="-4" radius="0.8" color="#556b2f"></m-sphere>
+    <m-sphere id="bush2" x="10" y="0.5" z="-5" radius="0.6" color="#6b8e23"></m-sphere>
+    <m-sphere id="bush3" x="-9" y="0.7" z="6" radius="0.9" color="#556b2f"></m-sphere>
+    <m-light id="ambient" type="point" x="0" y="20" z="0" color="#ddd6fe" intensity="500"></m-light>
+    <m-light id="ambient" type="point" x="0" y="20" z="30" color="#ddd6fe" intensity="500"></m-light>
+    <m-label id="label1" x="0" y="0" z="0" content="Hello World" color="#000000"></m-label>
+  </m-group>

@@ -282,12 +282,36 @@ export const CreateWorldSchema = z.object({
     .describe("Optional JavaScript code for interactivity"),
 })
 
-// Update World schema
-export const UpdateWorldSchema = z.object({
-  worldId: z.string().describe("ID of the web world to update"),
-  mmlContent: z
+// Simplified element operation schema to avoid deep $ref nesting
+export const ElementOperationSchema = z.object({
+  action: z.enum(["add", "update", "delete"]).describe("The action to perform"),
+  element: z
+    .any()
+    .optional()
+    .describe("MML element data (required for add/update actions)"),
+  elementId: z
     .string()
-    .describe("MML document content to update the web world with"),
+    .optional()
+    .describe(
+      "ID of element to update/delete (required for update/delete actions)",
+    ),
+})
+
+// Update Elements schema
+export const UpdateElementsSchema = z.object({
+  worldId: z.string().describe("ID of the web world to update"),
+  operation: ElementOperationSchema.describe("Element operation to perform"),
+})
+
+// Update Script schema
+export const UpdateScriptSchema = z.object({
+  worldId: z.string().describe("ID of the web world to update"),
+  script: z
+    .string()
+    .optional()
+    .describe(
+      "JavaScript code for interactivity (empty string to remove script)",
+    ),
 })
 
 // Get MML Details schema (no parameters needed)
@@ -304,14 +328,42 @@ export const ScreenshotWorldSchema = z.object({
 function extractDirectSchema(zodSchema: z.ZodType<any>, name: string) {
   const fullSchema = zodToJsonSchema(zodSchema, name) as any
 
+  // Recursively inline all $ref references to create a clean schema
+  function inlineRefs(schema: any, definitions: any): any {
+    if (typeof schema !== "object" || schema === null) {
+      return schema
+    }
+
+    if (schema.$ref && definitions) {
+      const refKey = schema.$ref.replace("#/definitions/", "")
+      const referencedSchema = definitions[refKey]
+      if (referencedSchema) {
+        return inlineRefs(referencedSchema, definitions)
+      }
+    }
+
+    if (Array.isArray(schema)) {
+      return schema.map((item) => inlineRefs(item, definitions))
+    }
+
+    const result: any = {}
+    for (const [key, value] of Object.entries(schema)) {
+      if (key !== "definitions") {
+        result[key] = inlineRefs(value, definitions)
+      }
+    }
+    return result
+  }
+
   // If the schema uses $ref, extract the actual definition
   if (fullSchema.$ref && fullSchema.definitions) {
     const definitionKey = fullSchema.$ref.replace("#/definitions/", "")
-    return fullSchema.definitions[definitionKey]
+    const baseSchema = fullSchema.definitions[definitionKey]
+    return inlineRefs(baseSchema, fullSchema.definitions)
   }
 
-  // Otherwise return the schema as-is
-  return fullSchema
+  // Inline all refs in the full schema
+  return inlineRefs(fullSchema, fullSchema.definitions)
 }
 
 // Auto-generated JSON Schema versions for MCP tool definitions
@@ -319,9 +371,14 @@ export const CreateWorldJsonSchema = extractDirectSchema(
   CreateWorldSchema,
   "CreateWorldSchema",
 )
-export const UpdateWorldJsonSchema = extractDirectSchema(
-  UpdateWorldSchema,
-  "UpdateWorldSchema",
+
+export const UpdateElementsJsonSchema = extractDirectSchema(
+  UpdateElementsSchema,
+  "UpdateElementsSchema",
+)
+export const UpdateScriptJsonSchema = extractDirectSchema(
+  UpdateScriptSchema,
+  "UpdateScriptSchema",
 )
 export const GetMMLDetailsJsonSchema = extractDirectSchema(
   GetMMLDetailsSchema,
@@ -334,7 +391,9 @@ export const ScreenshotWorldJsonSchema = extractDirectSchema(
 
 // Type inference for TypeScript
 export type CreateWorldInput = z.infer<typeof CreateWorldSchema>
-export type UpdateWorldInput = z.infer<typeof UpdateWorldSchema>
+export type UpdateElementsInput = z.infer<typeof UpdateElementsSchema>
+export type UpdateScriptInput = z.infer<typeof UpdateScriptSchema>
+export type ElementOperation = z.infer<typeof ElementOperationSchema>
 export type GetMMLDetailsInput = z.infer<typeof GetMMLDetailsSchema>
 export type ScreenshotWorldInput = z.infer<typeof ScreenshotWorldJsonSchema>
 export type MMLElement = z.infer<typeof MMLElementSchema>

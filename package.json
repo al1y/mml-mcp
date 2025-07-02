@@ -16,10 +16,11 @@
   "scripts": {
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "dev": "npm run dev:streamable-http",
-    "dev:stdio": "turbo run dev:local-servers dev:stdio:setup-config dev:stdio:watch --parallel",
-    "dev:sse": "turbo run dev:local-servers dev:sse --parallel",
-    "dev:streamable-http": "turbo run dev:local-servers dev:streamable-http --parallel",
+    "predev": "npm run build",
+    "dev": "npm run dev:stdio",
+    "dev:stdio": "turbo run build dev:local-servers dev:stdio:setup-config dev:stdio:watch --parallel",
+    "dev:sse": "turbo run build inspector dev:local-servers dev:sse --parallel",
+    "dev:streamable-http": "turbo run build inspector dev:local-servers dev:streamable-http --parallel",
     "test": "npm run build && cross-env NODE_OPTIONS='--experimental-vm-modules' jest --forceExit",
     "prepare": "husky"
   },

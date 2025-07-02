@@ -170,25 +170,14 @@ export class WebWorldClient {
     data: CreateWorldBody,
   ): Promise<WebWorldInstance & { url: string }> {
     const url = this.buildUrl("/")
-    const webWorldInstance = await this.makeRequest<WebWorldInstance>(url, {
+    const webWorldInstance = await this.makeRequest<
+      WebWorldInstance & { url: string }
+    >(url, {
       method: "POST",
       body: JSON.stringify(data),
     })
 
-    // Ensure server is ready and get game URL
-    let gameUrl = ""
-    if (this.isLocalhostMode) {
-      await this.ensureServerReady()
-      if (this.localServer && this.localServer.gameServerUrl) {
-        gameUrl = `${this.localServer.gameServerUrl}/game?id=${webWorldInstance.id}`
-      }
-    }
-
-    // Return the full world instance with the game URL added
-    return {
-      ...webWorldInstance,
-      url: gameUrl,
-    }
+    return webWorldInstance
   }
 
   /**

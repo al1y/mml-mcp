@@ -1,5 +1,5 @@
 import * as url from "url"
-import { createViewerServer } from "./server"
+import { createViewerServer } from "./server.js"
 import puppeteer, { Browser, Page } from "puppeteer"
 import { Server } from "http"
 

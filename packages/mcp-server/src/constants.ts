@@ -15,7 +15,8 @@ export const MML_DOCUMENT_DEFAULT_ID = "default-mml-document-id"
 // Tool names
 export const TOOL_NAMES = {
   CREATE_WORLD: "create-world",
-  UPDATE_WORLD: "update-world",
+  UPDATE_ELEMENTS: "update-elements",
+  UPDATE_SCRIPT: "update-script",
   SCREENSHOT_WORLD: "screenshot-world",
   GET_MML_DETAILS: "fetch-mml-info",
 } as const

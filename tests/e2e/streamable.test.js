@@ -213,7 +213,8 @@ describe("Streamable HTTP E2E Tests", () => {
       await testListTools(client)
       await testGetMMLInfo(client)
       const worldId = await testCreateWorld(client)
-      await testUpdateWorld(client, worldId)
+      await testUpdateElements(client, worldId)
+      await testUpdateScript(client, worldId)
       await testScreenshotWorld(client, worldId)
     } finally {
       // Always clean up the connection
@@ -232,7 +233,8 @@ describe("Streamable HTTP E2E Tests", () => {
 
     const expectedTools = [
       "create-world",
-      "update-world",
+      "update-elements",
+      "update-script",
       "screenshot-world",
       "fetch-mml-info",
     ]
@@ -256,17 +258,17 @@ describe("Streamable HTTP E2E Tests", () => {
   }
 
   async function testCreateWorld(client) {
-    // Read the duck MML file
-    const duckMmlPath = path.join(process.cwd(), "tests", "shared", "duck.mml")
-    const duckMmlContent = fs.readFileSync(duckMmlPath, "utf8")
+    // Read the farm MML file
+    const farmMmlPath = path.join(process.cwd(), "tests", "shared", "farm.mml")
+    const farmMmlContent = fs.readFileSync(farmMmlPath, "utf8")
 
     // Convert MML content to elements array
-    const elements = convertMMLToJSON(duckMmlContent)
+    const elements = convertMMLToJSON(farmMmlContent)
 
     const createWorldResult = await client.callTool({
       name: "create-world",
       arguments: {
-        title: "Duck World",
+        title: "Farm World",
         elements: elements,
       },
     })
@@ -290,20 +292,48 @@ describe("Streamable HTTP E2E Tests", () => {
     return worldId
   }
 
-  async function testUpdateWorld(client, worldId) {
-    // Read the farm MML file
-    const farmMmlPath = path.join(process.cwd(), "tests", "shared", "farm.mml")
-    const farmMmlContent = fs.readFileSync(farmMmlPath, "utf8")
-
-    const updateWorldResult = await client.callTool({
-      name: "update-world",
+  async function testUpdateElements(client, worldId) {
+    // Test adding a new element
+    const updateElementsResult = await client.callTool({
+      name: "update-elements",
       arguments: {
         worldId: worldId,
-        mmlContent: farmMmlContent,
+        operation: {
+          action: "add",
+          element: {
+            tag: "m-cube",
+            attributes: {
+              id: "test-cube",
+              color: "red",
+              x: 2,
+              y: 1,
+              z: 0,
+            },
+          },
+        },
       },
     })
 
-    expect(updateWorldResult.content).toBeDefined()
+    expect(updateElementsResult.content).toBeDefined()
+    expect(updateElementsResult.content[0].text).toContain(
+      "Added element with ID: test-cube",
+    )
+  }
+
+  async function testUpdateScript(client, worldId) {
+    // Test updating script
+    const updateScriptResult = await client.callTool({
+      name: "update-script",
+      arguments: {
+        worldId: worldId,
+        script: "console.log('Hello from updated script!');",
+      },
+    })
+
+    expect(updateScriptResult.content).toBeDefined()
+    expect(updateScriptResult.content[0].text).toContain(
+      "Updated script successfully",
+    )
   }
 
   async function testScreenshotWorld(client, worldId) {

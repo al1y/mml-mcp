@@ -132,7 +132,16 @@ export class WebWorldServer {
 
         const world = await this.storage.getWorld(LOCAL_PROJECT_ID, worldId)
         if (!world) {
-          res.status(404).send("World not found")
+          const worlds = await this.storage.listWorlds(LOCAL_PROJECT_ID, {})
+
+          let errorMessage = "World not found"
+          if (worlds.worlds.length > 0) {
+            errorMessage += `. Did you mean one of these? ${worlds.worlds.map((w) => w.name).join(", ")}`
+          } else {
+            errorMessage += ". No worlds found."
+          }
+
+          res.status(404).send(errorMessage)
           return
         }
 
@@ -228,8 +237,10 @@ export class WebWorldServer {
 
           const id = randomUUID()
 
+          const gameUrl = `${this.getGameUrl()}?id=${id}`
+
           console.log("Created new web world instance")
-          console.log(`${this.getGameUrl()}?id=${id}`)
+          console.log(gameUrl)
 
           const websocketUrl = this.extractWebSocketUrlFromMMLDocs(
             body.mmlDocumentsConfiguration,
@@ -249,7 +260,10 @@ export class WebWorldServer {
             body,
           )
 
-          res.json(world)
+          res.json({
+            ...world,
+            url: gameUrl,
+          })
         } catch (error) {
           this.handleError(res, error)
         }

@@ -97,7 +97,8 @@ describe("MCP Generate Tests", () => {
 
     // Test that MCP tools are available
     expect(TOOL_NAMES.CREATE_WORLD).toBe("create-world")
-    expect(TOOL_NAMES.UPDATE_WORLD).toBe("update-world")
+    expect(TOOL_NAMES.UPDATE_ELEMENTS).toBe("update-elements")
+    expect(TOOL_NAMES.UPDATE_SCRIPT).toBe("update-script")
 
     // Test that client creation functions are available
     expect(typeof createWebWorldClient).toBe("function")

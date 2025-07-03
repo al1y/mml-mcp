@@ -7,13 +7,16 @@ import type { Server } from "@modelcontextprotocol/sdk/server/index.js"
 import { MML_ELEMENTS } from "../data/elements.js"
 import {
   CreateWorldSchema,
-  UpdateWorldSchema,
+  UpdateElementsSchema,
+  UpdateScriptSchema,
   GetMMLDetailsSchema,
   CreateWorldJsonSchema,
-  UpdateWorldJsonSchema,
+  UpdateElementsJsonSchema,
+  UpdateScriptJsonSchema,
   GetMMLDetailsJsonSchema,
   type CreateWorldInput,
-  type UpdateWorldInput,
+  type UpdateElementsInput,
+  type UpdateScriptInput,
   type MMLElement,
   ScreenshotWorldSchema,
   ScreenshotWorldJsonSchema,
@@ -48,10 +51,16 @@ export function registerToolHandlers(
         inputSchema: CreateWorldJsonSchema,
       },
       {
-        name: TOOL_NAMES.UPDATE_WORLD,
+        name: TOOL_NAMES.UPDATE_ELEMENTS,
         description:
-          "Update an existing MML document with new elements or interactivity.",
-        inputSchema: UpdateWorldJsonSchema,
+          "Perform a single operation to add, update, or delete an MML element in the scene. All elements must have unique IDs for operations.",
+        inputSchema: UpdateElementsJsonSchema,
+      },
+      {
+        name: TOOL_NAMES.UPDATE_SCRIPT,
+        description:
+          "Update or remove the JavaScript code for world interactivity.",
+        inputSchema: UpdateScriptJsonSchema,
       },
       {
         name: TOOL_NAMES.SCREENSHOT_WORLD,
@@ -80,9 +89,14 @@ export function registerToolHandlers(
       return handleCreateWorld(validatedArgs, webWorldClient, mmlClient)
     }
 
-    if (name === TOOL_NAMES.UPDATE_WORLD) {
-      const validatedArgs = UpdateWorldSchema.parse(args)
-      return handleUpdateWorld(validatedArgs, webWorldClient, mmlClient)
+    if (name === TOOL_NAMES.UPDATE_ELEMENTS) {
+      const validatedArgs = UpdateElementsSchema.parse(args)
+      return handleUpdateElements(validatedArgs, webWorldClient, mmlClient)
+    }
+
+    if (name === TOOL_NAMES.UPDATE_SCRIPT) {
+      const validatedArgs = UpdateScriptSchema.parse(args)
+      return handleUpdateScript(validatedArgs, webWorldClient, mmlClient)
     }
 
     if (name === TOOL_NAMES.GET_MML_DETAILS) {
@@ -228,14 +242,15 @@ ${script ? `<script>\n${script}\n</script>` : ""}`
   }
 }
 
-async function handleUpdateWorld(
-  args: UpdateWorldInput,
+async function handleUpdateElements(
+  args: UpdateElementsInput,
   webWorldClient: WebWorldClient,
   mmlClient: MMLClient,
 ) {
-  const { worldId, mmlContent } = args
+  const { worldId, operation } = args
 
   let mmlObjectId: string
+  let currentMMLContent: string
 
   try {
     const webWorldInstance = await webWorldClient.getWebWorld(worldId)
@@ -260,6 +275,7 @@ async function handleUpdateWorld(
             text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} Can't find MML object ID for web world with ID ${worldId}`,
           },
         ],
+        isError: true,
       }
     }
 
@@ -275,6 +291,22 @@ async function handleUpdateWorld(
         isError: true,
       }
     }
+
+    // Get current MML content
+    const mmlObject = await mmlClient.getMMLObject(mmlObjectId)
+    if (!mmlObject || !mmlObject.source || mmlObject.source.type !== "source") {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} Can't retrieve current MML content`,
+          },
+        ],
+        isError: true,
+      }
+    }
+
+    currentMMLContent = mmlObject.source.source
   } catch (error) {
     return {
       content: [
@@ -288,14 +320,120 @@ async function handleUpdateWorld(
   }
 
   try {
+    // Parse and update MML content based on operation
+    const updatedMMLContent = await performElementOperation(
+      currentMMLContent,
+      operation,
+    )
+
     await mmlClient.updateMMLObject(mmlObjectId, {
       source: {
         type: "source",
-        source: mmlContent,
+        source: updatedMMLContent,
       },
     })
+
+    let operationDescription = ""
+    switch (operation.action) {
+      case "add":
+        operationDescription = `Added element with ID: ${operation.element.attributes?.id || "auto-generated"}`
+        break
+      case "update":
+        operationDescription = `Updated element with ID: ${operation.elementId}`
+        break
+      case "delete":
+        operationDescription = `Deleted element with ID: ${operation.elementId}`
+        break
+    }
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Element operation completed successfully. ${operationDescription}`,
+        },
+      ],
+    }
   } catch (error) {
-    console.error(`[UPDATE_WORLD] Error updating MML object:`, error)
+    console.error(`[UPDATE_ELEMENTS] Error updating elements:`, error)
+    return {
+      content: [
+        {
+          type: "text",
+          text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} ${error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN_ERROR}`,
+        },
+      ],
+      isError: true,
+    }
+  }
+}
+
+async function handleUpdateScript(
+  args: UpdateScriptInput,
+  webWorldClient: WebWorldClient,
+  mmlClient: MMLClient,
+) {
+  const { worldId, script } = args
+
+  let mmlObjectId: string
+  let currentMMLContent: string
+
+  try {
+    const webWorldInstance = await webWorldClient.getWebWorld(worldId)
+    if (!webWorldInstance) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} Can't find web world with ID ${worldId}`,
+          },
+        ],
+        isError: true,
+      }
+    }
+
+    const docs = webWorldInstance.mmlDocumentsConfiguration.mmlDocuments
+    if (Object.keys(docs).length === 0) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} Can't find MML object ID for web world with ID ${worldId}`,
+          },
+        ],
+        isError: true,
+      }
+    }
+
+    mmlObjectId = Object.keys(docs)[0]
+    if (!mmlObjectId) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} Can't find MML object ID for web world with ID ${worldId}`,
+          },
+        ],
+        isError: true,
+      }
+    }
+
+    // Get current MML content
+    const mmlObject = await mmlClient.getMMLObject(mmlObjectId)
+    if (!mmlObject || !mmlObject.source || mmlObject.source.type !== "source") {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} Can't retrieve current MML content`,
+          },
+        ],
+        isError: true,
+      }
+    }
+
+    currentMMLContent = mmlObject.source.source
+  } catch (error) {
     return {
       content: [
         {
@@ -307,14 +445,211 @@ async function handleUpdateWorld(
     }
   }
 
-  return {
-    content: [
-      {
-        type: "text",
-        text: `Updated world with new MML object ID: ${mmlObjectId}`,
+  try {
+    // Update script in MML content
+    const updatedMMLContent = updateScriptInMML(currentMMLContent, script)
+
+    await mmlClient.updateMMLObject(mmlObjectId, {
+      source: {
+        type: "source",
+        source: updatedMMLContent,
       },
-    ],
+    })
+
+    const scriptDescription = script ? "Updated script" : "Removed script"
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `${scriptDescription} successfully.`,
+        },
+      ],
+    }
+  } catch (error) {
+    console.error(`[UPDATE_SCRIPT] Error updating script:`, error)
+    return {
+      content: [
+        {
+          type: "text",
+          text: `${ERROR_MESSAGES.ERROR_UPDATING_WORLD} ${error instanceof Error ? error.message : ERROR_MESSAGES.UNKNOWN_ERROR}`,
+        },
+      ],
+      isError: true,
+    }
   }
+}
+
+// Utility function to generate unique IDs
+function generateUniqueId(
+  existingIds: Set<string>,
+  prefix: string = "element",
+): string {
+  let counter = 1
+  let id = `${prefix}-${counter}`
+  while (existingIds.has(id)) {
+    counter++
+    id = `${prefix}-${counter}`
+  }
+  return id
+}
+
+// Utility function to extract existing element IDs from MML content
+function extractElementIds(mmlContent: string): Set<string> {
+  const ids = new Set<string>()
+  // Simple regex to find id attributes
+  const idMatches = mmlContent.match(/id="([^"]+)"/g)
+  if (idMatches) {
+    idMatches.forEach((match) => {
+      const id = match.match(/id="([^"]+)"/)?.[1]
+      if (id) {
+        ids.add(id)
+      }
+    })
+  }
+  return ids
+}
+
+// Utility function to perform element operations on MML content
+async function performElementOperation(
+  currentMMLContent: string,
+  operation: UpdateElementsInput["operation"],
+): Promise<string> {
+  const existingIds = extractElementIds(currentMMLContent)
+
+  switch (operation.action) {
+    case "add": {
+      if (!operation.element) {
+        throw new Error("element is required for add operation")
+      }
+      // Ensure element has a unique ID
+      let element = operation.element
+      if (!element.attributes?.id) {
+        const tagName = element.tag.replace("m-", "")
+        const newId = generateUniqueId(existingIds, tagName)
+        element = {
+          ...element,
+          attributes: {
+            ...element.attributes,
+            id: newId,
+          },
+        } as MMLElement
+      } else if (existingIds.has(element.attributes.id)) {
+        throw new Error(
+          `Element with ID '${element.attributes.id}' already exists`,
+        )
+      }
+
+      // Render the new element
+      const newElementMML = renderMMLElement(element as any)
+
+      // Find the main scene group and add the element
+      const sceneGroupMatch = currentMMLContent.match(
+        /(<m-group[^>]*id="scene"[^>]*>)([\s\S]*?)(<\/m-group>)/i,
+      )
+      if (sceneGroupMatch) {
+        const [, openTag, content, closeTag] = sceneGroupMatch
+        const updatedContent = content.trim() + `\n  ${newElementMML}`
+        return currentMMLContent.replace(
+          sceneGroupMatch[0],
+          `${openTag}\n  ${updatedContent}\n${closeTag}`,
+        )
+      } else {
+        // If no scene group found, add to the end before any script tags
+        const scriptMatch = currentMMLContent.match(
+          /(<script>[\s\S]*<\/script>)/,
+        )
+        if (scriptMatch) {
+          return currentMMLContent.replace(
+            scriptMatch[0],
+            `${newElementMML}\n\n${scriptMatch[0]}`,
+          )
+        } else {
+          return currentMMLContent + `\n${newElementMML}`
+        }
+      }
+    }
+
+    case "update": {
+      if (!operation.elementId) {
+        throw new Error("elementId is required for update operation")
+      }
+      if (!operation.element) {
+        throw new Error("element is required for update operation")
+      }
+      if (!existingIds.has(operation.elementId)) {
+        throw new Error(`Element with ID '${operation.elementId}' not found`)
+      }
+
+      // Ensure the updated element keeps the same ID
+      const updatedElement = {
+        ...operation.element,
+        attributes: {
+          ...operation.element.attributes,
+          id: operation.elementId,
+        },
+      } as MMLElement
+
+      // Find and replace the element with the same ID
+      const elementRegex = new RegExp(
+        `<${operation.element.tag}[^>]*id="${operation.elementId}"[^>]*>.*?</${operation.element.tag}>`,
+        "gs",
+      )
+      const newElementMML = renderMMLElement(updatedElement as any)
+
+      if (!elementRegex.test(currentMMLContent)) {
+        throw new Error(
+          `Could not find element with ID '${operation.elementId}' to update`,
+        )
+      }
+
+      return currentMMLContent.replace(elementRegex, newElementMML)
+    }
+
+    case "delete": {
+      if (!operation.elementId) {
+        throw new Error("elementId is required for delete operation")
+      }
+      if (!existingIds.has(operation.elementId)) {
+        throw new Error(`Element with ID '${operation.elementId}' not found`)
+      }
+
+      // Find and remove the element (including any nested content)
+      const elementPattern = new RegExp(
+        `\\s*<[^>]*id="${operation.elementId}"[^>]*>.*?</[^>]+>\\s*`,
+        "gs",
+      )
+
+      if (!elementPattern.test(currentMMLContent)) {
+        throw new Error(
+          `Could not find element with ID '${operation.elementId}' to delete`,
+        )
+      }
+
+      return currentMMLContent.replace(elementPattern, "")
+    }
+
+    default:
+      throw new Error(`Unknown operation: ${(operation as any).action}`)
+  }
+}
+
+// Utility function to update script in MML content
+function updateScriptInMML(
+  currentMMLContent: string,
+  newScript?: string,
+): string {
+  // Remove existing script if any
+  const scriptRegex = /<script>[\s\S]*?<\/script>/g
+  let updatedContent = currentMMLContent.replace(scriptRegex, "")
+
+  // Add new script if provided
+  if (newScript && newScript.trim()) {
+    updatedContent =
+      updatedContent.trim() + `\n\n<script>\n${newScript}\n</script>`
+  }
+
+  return updatedContent
 }
 
 async function handleScreenshotWorld(

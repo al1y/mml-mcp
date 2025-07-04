@@ -258,18 +258,11 @@ describe("Streamable HTTP E2E Tests", () => {
   }
 
   async function testCreateWorld(client) {
-    // Read the farm MML file
-    const farmMmlPath = path.join(process.cwd(), "tests", "shared", "farm.mml")
-    const farmMmlContent = fs.readFileSync(farmMmlPath, "utf8")
-
-    // Convert MML content to elements array
-    const elements = convertMMLToJSON(farmMmlContent)
-
+    // Create an empty world first
     const createWorldResult = await client.callTool({
       name: "create-world",
       arguments: {
         title: "Farm World",
-        elements: elements,
       },
     })
 
@@ -289,11 +282,30 @@ describe("Streamable HTTP E2E Tests", () => {
       /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i,
     )
 
+    // Now add elements from the farm MML file
+    const farmMmlPath = path.join(process.cwd(), "tests", "shared", "farm.mml")
+    const farmMmlContent = fs.readFileSync(farmMmlPath, "utf8")
+    const elements = convertMMLToJSON(farmMmlContent)
+
+    // Add each element one by one
+    for (const element of elements) {
+      await client.callTool({
+        name: "update-elements",
+        arguments: {
+          worldId: worldId,
+          operation: {
+            action: "add",
+            element: element,
+          },
+        },
+      })
+    }
+
     return worldId
   }
 
   async function testUpdateElements(client, worldId) {
-    // Test adding a new element
+    // Test adding a new element (in addition to the farm elements already added)
     const updateElementsResult = await client.callTool({
       name: "update-elements",
       arguments: {

@@ -273,13 +273,6 @@ export const MMLElementSchema = z.discriminatedUnion("tag", [
 // Create World schema
 export const CreateWorldSchema = z.object({
   title: z.string().describe("Title/name for the MML document"),
-  elements: z
-    .array(MMLElementSchema)
-    .describe("Array of MML elements to include"),
-  script: z
-    .string()
-    .optional()
-    .describe("Optional JavaScript code for interactivity"),
 })
 
 // Simplified element operation schema to avoid deep $ref nesting

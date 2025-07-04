@@ -47,7 +47,7 @@ export function registerToolHandlers(
       {
         name: TOOL_NAMES.CREATE_WORLD,
         description:
-          "Create a new MML document with specified elements and interactivity. You should ALWAYS list all elements before creating the document. Once a document is ready, you should ALWAYS validate it before creating the document.",
+          "Create a new empty MML world with just the basic structure. After creating the world, use update-elements to add elements and update-script to add interactivity.",
         inputSchema: CreateWorldJsonSchema,
       },
       {
@@ -153,45 +153,20 @@ function renderMMLElement(element: MMLElement): string {
   }
 }
 
-// Check if lighting is already provided by the user (recursively)
-function hasLightingRecursive(elements: MMLElement[]): boolean {
-  return elements.some((element) => {
-    if (element.tag === "m-light") return true
-    if (
-      "children" in element &&
-      element.children &&
-      element.children.length > 0
-    ) {
-      return hasLightingRecursive(element.children as MMLElement[])
-    }
-    return false
-  })
-}
-
 async function handleCreateWorld(
   args: CreateWorldInput,
   webWorldClient: WebWorldClient,
   mmlClient: MMLClient,
 ) {
-  const { title, elements, script } = args
+  const { title } = args
 
   try {
-    const mmlElements = elements
-      .map((element) => renderMMLElement(element))
-      .join("\n  ")
-
-    // Always add lighting if not explicitly provided to prevent black scenes
-    const hasLighting = hasLightingRecursive(elements)
-    const defaultLighting = hasLighting
-      ? ""
-      : `\n  ${COMMENTS.DEFAULT_LIGHTING}\n  <m-light type="${LIGHT_TYPES.DIRECTIONAL}" intensity="500" color="${COLORS.WHITE}" x="2" y="5" z="2"></m-light>`
-
+    // Create an empty world with just the basic structure and default lighting
     const mmlContent = `<!-- ${title} -->
 <m-group id="scene">
-  ${mmlElements}${defaultLighting}
-</m-group>
-
-${script ? `<script>\n${script}\n</script>` : ""}`
+  ${COMMENTS.DEFAULT_LIGHTING}
+  <m-light type="${LIGHT_TYPES.DIRECTIONAL}" intensity="500" color="${COLORS.WHITE}" x="2" y="5" z="2"></m-light>
+</m-group>`
 
     const mmlObject = await mmlClient.createMMLObject({
       name: title,

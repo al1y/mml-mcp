@@ -32,8 +32,9 @@ async function main() {
   webWorldClient = new WebWorldClient(getWebWorldServerUrl())
   console.log(`🌍 Web World URL: ${webWorldClient.getUrl()}`)
 
+  const viewerServerPort = await getViewerServerPort()
   screenshotService = new ScreenshotService(
-    getViewerServerPort(),
+    viewerServerPort,
     mmlClient.getUrl(),
   )
   await screenshotService.initialize()

@@ -1,5 +1,5 @@
 {
-  "name": "@mml-mcp/game-client",
+  "name": "@mml-mcp/game-only-client",
   "private": true,
   "version": "0.21.6",
   "files": [

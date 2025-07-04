@@ -54,7 +54,7 @@ export class WebWorldServer {
 
     const gameClientBuildPath = path.resolve(
       monorepoRoot,
-      "apps/game-client/build",
+      "apps/game-only-client/build",
     )
     const isDevelopment =
       process.env.NODE_ENV !== "production" &&
@@ -65,9 +65,9 @@ export class WebWorldServer {
       this.buildDir = gameClientBuildPath
     } else {
       // Production: the game build should be bundled with the package
-      this.buildDir = path.resolve(__dirname, "../../game-client")
+      this.buildDir = path.resolve(__dirname, "../../game-only-client")
 
-      // Fallback to apps/game-client/build if the above doesn't exist
+      // Fallback to apps/game-only-client/build if the above doesn't exist
       if (!fs.existsSync(this.buildDir)) {
         this.buildDir = gameClientBuildPath
       }
@@ -161,7 +161,7 @@ export class WebWorldServer {
       }
     })
 
-    this.app.get("/game/apps/game-client/assets/*", (req, res) => {
+    this.app.get("/game/apps/game-only-client/assets/*", (req, res) => {
       const assetPath = req.path.replace("/game/", "")
       const fullAssetPath = path.join(this.buildDir, assetPath)
 

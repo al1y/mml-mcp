@@ -21,9 +21,9 @@
   },
   "include": [
     "src/**/*",
-    "apps/game-client/assets.d.ts",
-    "apps/game-client/index.ts",
-    "apps/game-client/server.ts"
+    "apps/game-only-client/assets.d.ts",
+    "apps/game-only-client/index.ts",
+    "apps/game-only-client/server.ts"
   ],
   "exclude": ["node_modules", "build"]
 }

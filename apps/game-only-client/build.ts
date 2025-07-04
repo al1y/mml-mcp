@@ -36,7 +36,7 @@ function createDevServer(buildDir: string) {
       return
     }
 
-    let filePath = path.join(
+    const filePath = path.join(
       buildDir,
       req.url === "/" ? "index.html" : req.url || "",
     )
@@ -133,7 +133,7 @@ const buildOptions: esbuild.BuildOptions = {
         },
         {
           from: ["./assets/**/*"],
-          to: ["./build/apps/game-client/assets/"],
+          to: ["./build/apps/game-only-client/assets/"],
         },
       ],
     }),
@@ -164,7 +164,7 @@ switch (mode) {
           .context({
             ...buildOptions,
             banner: {
-              js: ` (() => new WebSocket((window.location.protocol === "https:" ? "wss://" : "ws://")+window.location.host+'/game-client').addEventListener('message', () => location.reload()))();`,
+              js: ` (() => new WebSocket((window.location.protocol === "https:" ? "wss://" : "ws://")+window.location.host+'/game-only-client').addEventListener('message', () => location.reload()))();`,
             },
           })
           .then((context) => context.watch())

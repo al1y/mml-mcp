@@ -1,6 +1,7 @@
 import Head from "next/head"
 import Game from "../components/Game"
 import ChatPanel from "../components/ChatPanel"
+import McpClient from "../components/McpClient"
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <main>
         <ChatPanel />
         <Game />
+        <McpClient />
       </main>
     </>
   )

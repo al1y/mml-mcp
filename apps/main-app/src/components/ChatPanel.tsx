@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react"
-import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Card, CardContent } from "./ui/card"
 import { ScrollArea } from "./ui/scroll-area"
-import { Send, User, Bot, X, Zap, AlertTriangle } from "lucide-react"
+import { User, Bot, Zap } from "lucide-react"
 
 interface Message {
   role: "user" | "assistant"
@@ -11,7 +10,6 @@ interface Message {
   timestamp: Date
   mcp_used?: boolean
   mcp_server_url?: string
-  fallback?: boolean
 }
 
 export default function ChatPanel() {
@@ -66,7 +64,6 @@ export default function ChatPanel() {
         timestamp: new Date(),
         mcp_used: data.mcp_used,
         mcp_server_url: data.mcp_server_url,
-        fallback: data.fallback,
       }
 
       setMessages((prev) => [...prev, assistantMessage])
@@ -155,12 +152,6 @@ export default function ChatPanel() {
                                     <span>MCP Tools</span>
                                   </div>
                                 )}
-                                {message.fallback && (
-                                  <div className="flex items-center gap-1 text-amber-600 bg-amber-100 px-2 py-1 rounded">
-                                    <AlertTriangle className="h-3 w-3" />
-                                    <span>Fallback</span>
-                                  </div>
-                                )}
                               </div>
                             )}
                           </div>
@@ -207,13 +198,13 @@ export default function ChatPanel() {
           position: "fixed",
           left: 0,
           right: 0,
-          bottom: "1rem",
+          bottom: "2rem",
           zIndex: 50,
           display: "flex",
           justifyContent: "center",
         }}
       >
-        <div className="w-[500px] bg-black/80 backdrop-blur-sm border-6 border-white/50 rounded-xl shadow-2xl">
+        <div className="w-[500px] bg-black/80 backdrop-blur-sm border-2 border-white/50 rounded-xl shadow-2xl">
           <div className="flex gap-3">
             <Input
               value={input}

@@ -65,5 +65,7 @@ export async function createMcpServer(
   registerResourceHandlers(server)
   registerToolHandlers(server, webWorldClient, mmlClient, screenshotService)
 
+  console.log("🚀 Initialized MCP server")
+
   return server
 }

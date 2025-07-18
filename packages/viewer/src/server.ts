@@ -1,9 +1,6 @@
 import express, { Application } from "express"
 import enableWs from "express-ws"
 import * as path from "path"
-import * as url from "url"
-
-const dirname = url.fileURLToPath(new URL(".", import.meta.url))
 
 export interface MMLObjectInstance {
   id: string
@@ -72,10 +69,7 @@ export function createViewerServer(
   app.use(
     "/client/",
     express.static(
-      path.resolve(
-        dirname,
-        "../../../node_modules/@mml-io/mml-web-client/build/",
-      ),
+      path.resolve(process.cwd(), "node_modules/@mml-io/mml-web-client/build/"),
     ),
   )
 

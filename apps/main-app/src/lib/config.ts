@@ -2,46 +2,39 @@
  * Configuration utilities for MCP server integration
  */
 
+import { TOOL_NAMES } from "@mml-mcp/mcp-server"
+
 /**
  * Get the MCP server base URL
  * Uses environment variable MCP_SERVER_URL or falls back to request origin
  */
-export function getMcpServerBaseUrl(requestOrigin?: string): string {
+export function getMcpServerBaseUrl(): string {
   // Use environment variable if available
   if (process.env.MCP_SERVER_URL) {
     return process.env.MCP_SERVER_URL
   }
 
-  // Fall back to request origin or localhost
-  const fallback = requestOrigin || "http://localhost:3000"
-  return fallback
+  // Fatal error if MCP_SERVER_URL is not configured
+  throw new Error("MCP_SERVER_URL environment variable is required but not set")
 }
 
 /**
  * Get the full MCP server endpoint URL
  */
-export function getMcpServerUrl(requestOrigin?: string): string {
-  const baseUrl = getMcpServerBaseUrl(requestOrigin)
+export function getMcpServerUrl(): string {
+  const baseUrl = getMcpServerBaseUrl()
   return `${baseUrl}/api/mcp`
 }
 
 /**
  * Get MCP server configuration for OpenAI integration
  */
-export function getMcpServerConfig(requestOrigin?: string) {
-  const serverUrl = getMcpServerUrl(requestOrigin)
-
+export function getMcpServerConfig() {
   return {
     type: "mcp" as const,
     server_label: "mml-mcp-server",
-    server_url: serverUrl,
-    allowed_tools: [
-      "create-world",
-      "update-elements",
-      "update-script",
-      "screenshot-world",
-      "fetch-mml-info",
-    ],
+    server_url: getMcpServerUrl(),
+    allowed_tools: Object.values(TOOL_NAMES),
     require_approval: "never" as const,
   }
 }

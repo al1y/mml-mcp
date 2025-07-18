@@ -24,6 +24,9 @@ export default async function handler(
     return res.status(500).json({ message: "OpenAI API key is not configured" })
   }
 
+  console.log("message", message)
+  console.log("conversation", conversation)
+
   try {
     // Build conversation history
     const messages = [...conversation, { role: "user", content: message }]
@@ -80,31 +83,6 @@ export default async function handler(
     })
   } catch (error) {
     console.error("OpenAI API error:", error)
-
-    // Fallback to regular chat completion if MCP fails
-    try {
-      const messages = [...conversation, { role: "user", content: message }]
-
-      const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
-        max_tokens: 1000,
-        temperature: 0.7,
-      })
-
-      const reply =
-        completion.choices[0]?.message?.content ||
-        "Sorry, I could not generate a response."
-
-      res.status(200).json({
-        message: reply,
-        conversation: [...messages, { role: "assistant", content: reply }],
-        mcp_used: false,
-        fallback: true,
-      })
-    } catch (fallbackError) {
-      console.error("Fallback API error:", fallbackError)
-      res.status(500).json({ message: "Failed to get response from OpenAI" })
-    }
+    res.status(500).json({ message: "Failed to get response from OpenAI" })
   }
 }

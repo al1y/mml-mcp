@@ -374,15 +374,7 @@ export default function McpClient() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  <span className="text-sm">
-                    Sessions: {health.sessions.active}
-                  </span>
                 </div>
-                {health.sessions.active > 0 && (
-                  <p className="text-xs text-gray-500">
-                    IDs: {health.sessions.ids.join(", ").substring(0, 50)}...
-                  </p>
-                )}
                 <p className="text-xs text-gray-500">
                   Message: {health.message}
                 </p>

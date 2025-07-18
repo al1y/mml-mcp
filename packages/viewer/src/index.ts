@@ -26,20 +26,14 @@ export class ScreenshotService {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Starting server on port ${this.port}...`)
     const app = createViewerServer(this.port, this.mmlObjectServerUrl)
 
     // Start the server
-    this.server = app.listen(this.port, () => {
-      console.log(`Server running at http://localhost:${this.port}`)
-    })
+    this.server = app.listen(this.port, () => {})
 
     // Wait a moment for server to be ready
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    console.log(
-      `Launching browser in ${this.debug ? "non-headless" : "headless"} mode...`,
-    )
     // Configure browser args - different for CI vs local
     const isCI =
       process.env.CI === "true" || process.env.GITHUB_ACTIONS === "true"

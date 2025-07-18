@@ -8,7 +8,14 @@
     "dev:local-servers": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "env": [
+        "MCP_SERVER_URL",
+        "MML_SERVER_URL",
+        "WEB_WORLD_SERVER_URL",
+        "VIEWER_SERVER_PORT",
+        "MSQUARED_API_KEY"
+      ]
     },
     "inspector": {
       "cache": false,
@@ -27,12 +34,26 @@
     "dev:sse": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "env": ["MML_SERVER_URL", "WEB_WORLD_SERVER_URL", "MSQUARED_API_KEY"]
     },
     "dev:streamable-http": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "env": ["MML_SERVER_URL", "WEB_WORLD_SERVER_URL", "MSQUARED_API_KEY"]
+    },
+    "prod": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"],
+      "env": ["MML_SERVER_URL", "WEB_WORLD_SERVER_URL", "MSQUARED_API_KEY"]
+    },
+    "frontend-app": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"],
+      "env": ["MML_SERVER_URL", "WEB_WORLD_SERVER_URL", "MSQUARED_API_KEY"]
     },
     "test": {
       "dependsOn": ["build"],

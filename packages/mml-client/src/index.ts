@@ -17,7 +17,6 @@ import { LOCAL_PROJECT_ID } from "@mml-mcp/shared"
  * API Client for MML Objects
  *
  * Supports both localhost development server and M² cloud APIs.
- * Switch between modes using the USE_MSQUARED_APIS environment variable.
  *
  * In localhost mode, automatically creates and manages a local server.
  * In M² mode, uses https://api.msquared.io and gets API key from MSQUARED_API_KEY env var.
@@ -27,19 +26,16 @@ export class MMLClient {
   private projectId: string
   private headers: Record<string, string>
   private localServer: ServerInfo | null = null
-  private isLocalhostMode: boolean
+  private usingMsquaredApi: boolean
   private externalServerUrl: string | null = null
 
   constructor(externalServerUrl?: string) {
-    this.projectId = process.env.MSQUARED_PROJECT_ID || LOCAL_PROJECT_ID
-    this.isLocalhostMode = !process.env.USE_MSQUARED_APIS
+    this.projectId = process.env.NEXT_PUBLIC_PROJECT_ID || LOCAL_PROJECT_ID
+    this.usingMsquaredApi = !externalServerUrl?.includes("api.msquared.io")
     this.externalServerUrl = externalServerUrl || null
 
-    // Determine base URL based on environment
-    if (process.env.USE_MSQUARED_APIS) {
-      this.baseUrl = "https://api.msquared.io"
-    } else if (this.externalServerUrl) {
-      // Use provided external server URL
+    // Use provided external server URL
+    if (this.externalServerUrl) {
       this.baseUrl = this.externalServerUrl
     } else {
       // Will be set when local server starts
@@ -52,19 +48,19 @@ export class MMLClient {
     }
 
     // Add API key for M² APIs from environment variable
-    if (process.env.USE_MSQUARED_APIS) {
+    if (this.usingMsquaredApi) {
       const apiKey = process.env.MSQUARED_API_KEY
       if (apiKey) {
         this.headers["Authorization"] = `Bearer ${apiKey}`
       } else {
         console.warn(
-          "Warning: USE_MSQUARED_APIS is set but MSQUARED_API_KEY environment variable not found",
+          "Warning: Using M² APIs but MSQUARED_API_KEY environment variable not found",
         )
       }
     }
 
     // Start local server if in localhost mode and no external server provided
-    if (this.isLocalhostMode && !this.externalServerUrl) {
+    if (!this.externalServerUrl) {
       this.initializeLocalServer()
     }
   }
@@ -87,7 +83,7 @@ export class MMLClient {
    * Ensure local server is ready (lazy initialization for async constructor alternative)
    */
   private async ensureServerReady(): Promise<void> {
-    if (this.isLocalhostMode && !this.localServer && !this.externalServerUrl) {
+    if (this.usingMsquaredApi && !this.localServer && !this.externalServerUrl) {
       await this.initializeLocalServer()
     }
   }
@@ -248,7 +244,7 @@ export async function createMMLClient(): Promise<MMLClient> {
   const client = new MMLClient()
 
   // If in localhost mode, ensure server is initialized
-  if (!process.env.USE_MSQUARED_APIS) {
+  if (client.getUrl().includes("localhost")) {
     await client["ensureServerReady"]() // Access private method for initialization
   }
 

@@ -157,6 +157,9 @@ process.on("SIGTERM", async () => {
   }
 })
 
+// Export tool names for external use
+export { TOOL_NAMES } from "./constants.js"
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error("Unhandled error:", error)

@@ -37,7 +37,6 @@ await client.stop();
 
 ```bash
 # Set environment variables
-export USE_MSQUARED_APIS=true
 export MSQUARED_API_KEY=your-actual-api-key
 ```
 
@@ -74,7 +73,6 @@ interface MMLClientConfig {
 
 ### Environment Variables
 
-- `USE_MSQUARED_APIS`: Set to any truthy value to use M² cloud APIs instead of localhost
 - `MSQUARED_API_KEY`: Your M² API key (required when USE_MSQUARED_APIS is set)
 
 ## API Methods
